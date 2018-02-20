@@ -39,6 +39,13 @@ describe("Gilded Rose", function () {
             updateAndCheckQuality(gildedRose, 7);
             updateAndCheckQuality(gildedRose, 5);
         });
+
+        it("should not decrease quality below zero", function() {
+            const gildedRose = new Shop([new Item("Regular Item", -1, 0)]);
+
+            updateAndCheckQuality(gildedRose, 0);
+            updateAndCheckQuality(gildedRose, 0);
+        });
     });
 
     describe("Aged Brie", function() {
@@ -64,6 +71,15 @@ describe("Gilded Rose", function () {
             updateAndCheckQuality(gildedRose, 6);
             updateAndCheckQuality(gildedRose, 8);
         });
+
+        describe("if sell-in day is negative", function() {
+            it("should not increase quality above 50", function() {
+                const gildedRose = new Shop([new Item(name, -10, 49)]);
+    
+                updateAndCheckQuality(gildedRose, 50);
+                updateAndCheckQuality(gildedRose, 50);
+            });
+        });
     });
 
     describe("Sulfuras", function() {
@@ -84,30 +100,66 @@ describe("Gilded Rose", function () {
             updateAndCheckSellIn(gildedRose, 10);
             updateAndCheckSellIn(gildedRose, 10);
         });
+
+        describe("if sell-in is negative", function() {
+            it("should not change quality", function() {
+                const sellIn = -40;
+                const quality = 80;
+                const gildedRose = new Shop([new Item(name, sellIn, quality)]);
+    
+                updateAndCheckQuality(gildedRose, quality);
+                updateAndCheckQuality(gildedRose, quality);
+            });
+    
+            it("should not change sell-in day", function() {
+                const gildedRose = new Shop([new Item(name, -10, 80)]);
+    
+                updateAndCheckSellIn(gildedRose, -10);
+                updateAndCheckSellIn(gildedRose, -10);
+            });
+        });
     });
 
     describe("Backstage passes", function() {
         const name = "Backstage passes to a TAFKAL80ETC concert";
 
-        it("should increase quality by 1 if sell-in day is over 10", function() {
+        it("should increase quality by 1 ", function() {
             const shop = createShop(name, { quality: 5, sellIn: 15 });
 
             updateAndCheckQuality(shop, 6);
             updateAndCheckQuality(shop, 7);
         });
 
-        it("should increase quality by 2 if sell-in day is <= 10 and > 5", function() {
-            const shop = createShop(name, { quality: 5, sellIn: 10 });
+        describe("if sell-in day is <= 10 and > 5", function() {
+            it("should increase quality by 2", function() {
+                const shop = createShop(name, { quality: 5, sellIn: 10 });
 
-            updateAndCheckQuality(shop, 7);
-            updateAndCheckQuality(shop, 9);
+                updateAndCheckQuality(shop, 7);
+                updateAndCheckQuality(shop, 9);
+            });
+
+            it("should not increase quality above 50", function() {
+                const shop = createShop(name, { quality: 49, sellIn: 10 });
+
+                updateAndCheckQuality(shop, 50);
+                updateAndCheckQuality(shop, 50);
+            });
         });
 
-        it("should increase quality by 3 if sell-in day is <= 5", function() {
-            const shop = createShop(name, { quality: 5, sellIn: 5 });
+        describe("if sell-in day is <= 5", function() {
+            it("should increase quality by 3", function() {
+                const shop = createShop(name, { quality: 5, sellIn: 5 });
 
-            updateAndCheckQuality(shop, 8);
-            updateAndCheckQuality(shop, 11);
+                updateAndCheckQuality(shop, 8);
+                updateAndCheckQuality(shop, 11);
+            });
+
+            it("should not increase quality above 50", function() {
+                const shop = createShop(name, { quality: 49, sellIn: 5 });
+
+                updateAndCheckQuality(shop, 50);
+                updateAndCheckQuality(shop, 50);
+            });
         });
 
         it("should set quality to 0 after sell-in day", function() {
