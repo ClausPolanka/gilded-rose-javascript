@@ -52,21 +52,27 @@ describe("Gilded Rose", function () {
         const name = "Aged Brie";
 
         it("should increase quality by one", function() {
-            const gildedRose = new Shop([new Item(name, 10, 5)]);
+            const gildedRose = new Shop([new Item(name, 10, 5)], [{
+                incrementQuality: true,
+            }]);
 
             updateAndCheckQuality(gildedRose, 6);
             updateAndCheckQuality(gildedRose, 7);
         });
 
         it("should not increase quality above 50", function() {
-            const gildedRose = new Shop([new Item(name, 10, 49)]);
+            const gildedRose = new Shop([new Item(name, 10, 49)], [{
+                incrementQuality: true,
+            }]);
 
             updateAndCheckQuality(gildedRose, 50);
             updateAndCheckQuality(gildedRose, 50);
         });
 
         it("should increase quality by two after sell-in day", function() {
-            const gildedRose = new Shop([new Item(name, 1, 5)]);
+            const gildedRose = new Shop([new Item(name, 1, 5)], [{
+                incrementQuality: true,
+            }]);
 
             updateAndCheckQuality(gildedRose, 6);
             updateAndCheckQuality(gildedRose, 8);
@@ -74,7 +80,9 @@ describe("Gilded Rose", function () {
 
         describe("if sell-in day is negative", function() {
             it("should not increase quality above 50", function() {
-                const gildedRose = new Shop([new Item(name, -10, 49)]);
+                const gildedRose = new Shop([new Item(name, -10, 49)], [{
+                    incrementQuality: true,
+                }]);
     
                 updateAndCheckQuality(gildedRose, 50);
                 updateAndCheckQuality(gildedRose, 50);
@@ -88,14 +96,18 @@ describe("Gilded Rose", function () {
         it("should not change quality", function() {
             const sellIn = 40;
             const quality = 80;
-            const gildedRose = new Shop([new Item(name, sellIn, quality)]);
+            const gildedRose = new Shop([new Item(name, sellIn, quality)], [{
+                freeze: true,
+            }]);
 
             updateAndCheckQuality(gildedRose, quality);
             updateAndCheckQuality(gildedRose, quality);
         });
 
         it("should not change sell-in day", function() {
-            const gildedRose = new Shop([new Item(name, 10, 80)]);
+            const gildedRose = new Shop([new Item(name, 10, 80)], [{
+                freeze: true,
+            }]);
 
             updateAndCheckSellIn(gildedRose, 10);
             updateAndCheckSellIn(gildedRose, 10);
@@ -105,14 +117,18 @@ describe("Gilded Rose", function () {
             it("should not change quality", function() {
                 const sellIn = -40;
                 const quality = 80;
-                const gildedRose = new Shop([new Item(name, sellIn, quality)]);
+                const gildedRose = new Shop([new Item(name, sellIn, quality)], [{
+                    freeze: true,
+                }]);
     
                 updateAndCheckQuality(gildedRose, quality);
                 updateAndCheckQuality(gildedRose, quality);
             });
     
             it("should not change sell-in day", function() {
-                const gildedRose = new Shop([new Item(name, -10, 80)]);
+                const gildedRose = new Shop([new Item(name, -10, 80)], [{
+                    freeze: true,
+                }]);
     
                 updateAndCheckSellIn(gildedRose, -10);
                 updateAndCheckSellIn(gildedRose, -10);
@@ -120,11 +136,17 @@ describe("Gilded Rose", function () {
         });
     });
 
-    describe("Backstage passes", function() {
+    describe.skip("Backstage passes", function() {
         const name = "Backstage passes to a TAFKAL80ETC concert";
 
         it("should increase quality by 1 ", function() {
-            const shop = createShop(name, { quality: 5, sellIn: 15 });
+            const shop = createShop(name, { quality: 5, sellIn: 15 }, {
+                qualityRules: {
+                    10: 2,
+                    5: 3,
+                },
+                afterPassed: 0,
+            });
 
             updateAndCheckQuality(shop, 6);
             updateAndCheckQuality(shop, 7);
